@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -8,14 +11,87 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-bg: #FBF8F3;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F1E6D6;
+  --color-surface-3: #F8F2E7;
+  --color-ink: #3E3024;
+  --color-ink-soft: #8F7A64;
+  --color-accent: #AD8752;
+  --color-accent-soft: #DFCCA3;
+  --color-accent-2: #8C6A42;
+  --color-line: #EAE0D0;
+  --color-btn-ink: #FBF8F3;
+
+  --font-display: 'Cormorant Garamond', serif;
+  --font-script: 'Alex Brush', cursive;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --radius-blob: 63% 37% 54% 46% / 43% 37% 63% 57%;
+
+  --animate-morph: morph 16s ease-in-out infinite;
+  --animate-morph-reverse: morph 16s ease-in-out infinite reverse;
+}
+
+@keyframes morph {
+  0%, 100% { border-radius: 63% 37% 54% 46% / 43% 37% 63% 57%; }
+  50% { border-radius: 42% 58% 61% 39% / 48% 42% 58% 52%; }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: var(--color-bg);
     --foreground: #ededed;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-bg font-sans text-ink antialiased;
+  }
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+}
+@layer utilities {
+  .text-display-hero {
+    font-size: clamp(2.5rem, 1.9rem + 2.6vw, 4rem);
+  }
+  .text-display-section {
+    font-size: clamp(1.9rem, 1.5rem + 1.5vw, 2.8rem);
+  }
+  .text-display-about {
+    font-size: clamp(1.8rem, 1.4rem + 1.5vw, 2.6rem);
+  }
+  .text-display-band {
+    font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.2rem);
+  }
+  .text-display-cta {
+    font-size: clamp(1.9rem, 1.5rem + 1.8vw, 2.8rem);
+  }
+  .text-lede {
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full bg-ink px-7 py-[15px] text-[13px] font-bold uppercase tracking-wide text-btn-ink transition hover:-translate-y-0.5 hover:bg-[#2E2318];
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-full border border-accent px-7 py-[15px] text-[13px] font-bold uppercase tracking-wide text-accent transition hover:border-ink hover:bg-ink hover:text-btn-ink;
+  }
+  .input {
+    @apply w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:ring-2 focus:ring-accent/40;
+  }
+  .btn-icon {
+    @apply flex h-9 w-9 flex-none items-center justify-center rounded-full border border-line text-ink-soft transition hover:border-red-300 hover:text-red-600 disabled:pointer-events-none disabled:opacity-40;
   }
 }
 
