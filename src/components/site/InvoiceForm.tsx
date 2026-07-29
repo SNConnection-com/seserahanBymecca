@@ -5,7 +5,6 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useReactToPrint } from "react-to-print";
 import { z } from "zod";
-import { logout } from "@/app/login/actions";
 
 const itemSchema = z.object({
   description: z.string().min(1, { error: "Wajib diisi" }),
@@ -17,10 +16,12 @@ const invoiceSchema = z.object({
   invoiceNumber: z.string().min(1, { error: "Wajib diisi" }),
   invoiceDate: z.string().min(1, { error: "Wajib diisi" }),
   clientName: z.string().min(1, { error: "Nama klien wajib diisi" }),
-  eventDate: z.string().optional(),
+  phone: z.string().optional(),
+  instagram: z.string().optional(),
+  address: z.string().optional(),
+  acara: z.string().optional(),
   items: z.array(itemSchema).min(1, { error: "Minimal 1 item" }),
-  discount: z.coerce.number().min(0).optional(),
-  notes: z.string().optional(),
+  dp: z.coerce.number().min(0).optional(),
 });
 
 type InvoiceInput = z.input<typeof invoiceSchema>;
@@ -66,10 +67,12 @@ export function InvoiceForm() {
       invoiceNumber: "",
       invoiceDate: "",
       clientName: "",
-      eventDate: "",
+      phone: "",
+      instagram: "",
+      address: "",
+      acara: "",
       items: [emptyItem],
-      discount: 0,
-      notes: "",
+      dp: 0,
     },
   });
 
@@ -81,13 +84,13 @@ export function InvoiceForm() {
   }, [setValue]);
 
   const values = watch();
-  const subtotal =
+  const total =
     values.items?.reduce(
       (sum, item) => sum + (Number(item?.qty) || 0) * (Number(item?.price) || 0),
       0
     ) ?? 0;
-  const discount = Number(values.discount) || 0;
-  const total = Math.max(subtotal - discount, 0);
+  const dp = Number(values.dp) || 0;
+  const sisa = Math.max(total - dp, 0);
 
   const printFn = useReactToPrint({
     contentRef: previewRef,
@@ -103,31 +106,16 @@ export function InvoiceForm() {
       invoiceNumber: generateInvoiceNumber(),
       invoiceDate: todayISO(),
       clientName: "",
-      eventDate: "",
+      phone: "",
+      instagram: "",
+      address: "",
+      acara: "",
       items: [emptyItem],
-      discount: 0,
-      notes: "",
+      dp: 0,
     });
   }
 
   return (
-    <main className="min-h-screen bg-bg px-5 py-10 sm:px-8">
-      <div className="mx-auto max-w-[1180px]">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="font-script text-3xl text-accent">Admin</p>
-            <h1 className="font-display text-2xl font-semibold text-ink">Buat Invoice</h1>
-          </div>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="rounded-full border border-line px-5 py-2 text-xs font-bold uppercase tracking-wide text-ink-soft transition hover:border-ink hover:bg-ink hover:text-btn-ink"
-            >
-              Keluar
-            </button>
-          </form>
-        </div>
-
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
           <div className="rounded-2xl border border-line bg-surface p-6 sm:p-8">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -142,7 +130,7 @@ export function InvoiceForm() {
               </div>
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
-                  Tanggal Invoice
+                  Tanggal
                 </label>
                 <input type="date" {...register("invoiceDate")} className="input" />
                 {errors.invoiceDate && (
@@ -151,7 +139,7 @@ export function InvoiceForm() {
               </div>
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
-                  Nama Klien
+                  Nama
                 </label>
                 <input
                   {...register("clientName")}
@@ -164,9 +152,31 @@ export function InvoiceForm() {
               </div>
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
-                  Tanggal Acara (opsional)
+                  No. Telp
                 </label>
-                <input type="date" {...register("eventDate")} className="input" />
+                <input {...register("phone")} placeholder="08xx-xxxx-xxxx" className="input" />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
+                  Instagram
+                </label>
+                <input {...register("instagram")} placeholder="@username" className="input" />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
+                  Acara
+                </label>
+                <input
+                  {...register("acara")}
+                  placeholder="Pernikahan / Lamaran / Tunangan"
+                  className="input"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
+                  Alamat
+                </label>
+                <input {...register("address")} className="input" />
               </div>
             </div>
 
@@ -188,7 +198,7 @@ export function InvoiceForm() {
                 {fields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="flex flex-col gap-2 sm:grid sm:grid-cols-[1fr_60px_100px_28px] sm:items-start"
+                    className="flex flex-col gap-2 sm:grid sm:grid-cols-[1fr_100px_60px_28px] sm:items-start"
                   >
                     <div>
                       <input
@@ -204,14 +214,16 @@ export function InvoiceForm() {
                     </div>
                     <input
                       type="number"
-                      min={1}
-                      {...register(`items.${index}.qty`, { valueAsNumber: true })}
+                      min={0}
+                      placeholder="Harga"
+                      {...register(`items.${index}.price`, { valueAsNumber: true })}
                       className="input"
                     />
                     <input
                       type="number"
-                      min={0}
-                      {...register(`items.${index}.price`, { valueAsNumber: true })}
+                      min={1}
+                      placeholder="Qty"
+                      {...register(`items.${index}.qty`, { valueAsNumber: true })}
                       className="input"
                     />
                     <button
@@ -231,22 +243,15 @@ export function InvoiceForm() {
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
-                  Diskon (Rp)
+                  DP (Rp)
                 </label>
                 <input
                   type="number"
                   min={0}
-                  {...register("discount", { valueAsNumber: true })}
+                  {...register("dp", { valueAsNumber: true })}
                   className="input"
                 />
               </div>
-            </div>
-
-            <div className="mt-4">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
-                Catatan (opsional)
-              </label>
-              <textarea rows={3} {...register("notes")} className="input" />
             </div>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -260,84 +265,132 @@ export function InvoiceForm() {
           </div>
 
           <div className="rounded-2xl border border-line bg-surface-2 p-4 sm:p-6">
-            <div ref={previewRef} className="mx-auto max-w-[560px] bg-surface p-8 text-ink">
-              <div className="flex items-start justify-between border-b border-line pb-5">
-                <div>
-                  <p className="font-script text-2xl text-accent">Mecca</p>
-                  <p className="text-[10px] uppercase tracking-[.2em] text-ink-soft">
-                    Seserahan Atelier
-                  </p>
-                </div>
-                <div className="text-right text-xs text-ink-soft">
-                  <p className="font-bold uppercase tracking-wide text-ink">Invoice</p>
-                  <p>{values.invoiceNumber}</p>
-                  <p>{values.invoiceDate}</p>
-                </div>
+            <div
+              ref={previewRef}
+              className="relative mx-auto max-w-[560px] overflow-hidden bg-surface p-8 text-ink"
+            >
+              <div className="flex items-start justify-between">
+                <h2 className="font-display text-2xl font-semibold text-ink">Seserahan By Mecca</h2>
+                <p className="font-script text-3xl italic text-red-600">Invoice</p>
               </div>
 
-              <div className="mt-5 text-sm">
-                <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">Untuk</p>
-                <p className="mt-1 font-semibold">{values.clientName || "-"}</p>
-                {values.eventDate && (
-                  <p className="text-ink-soft">Tanggal acara: {values.eventDate}</p>
-                )}
+              <div className="mt-3 flex items-start gap-2 text-xs text-ink-soft">
+                <span className="flex-none font-semibold text-ink">Official Galery :</span>
+                <span>Tenjo City Tahap 3 Blok i 1 no 3 - Tenjo // Tigaraksa - Tangerang</span>
               </div>
 
-              <table className="mt-6 w-full text-sm">
-                <thead>
-                  <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-ink-soft">
-                    <th className="pb-2 font-bold">Deskripsi</th>
-                    <th className="pb-2 text-right font-bold">Qty</th>
-                    <th className="pb-2 text-right font-bold">Harga</th>
-                    <th className="pb-2 text-right font-bold">Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {values.items?.map((item, i) => (
-                    <tr key={i} className="border-b border-line/60">
-                      <td className="py-2">{item?.description || "-"}</td>
-                      <td className="py-2 text-right">{Number(item?.qty) || 0}</td>
-                      <td className="py-2 text-right">{formatRupiah(Number(item?.price) || 0)}</td>
-                      <td className="py-2 text-right">
-                        {formatRupiah((Number(item?.qty) || 0) * (Number(item?.price) || 0))}
+              <div className="mt-5 space-y-1 text-[13px]">
+                {[
+                  ["No. Invoice", values.invoiceNumber],
+                  ["Tanggal", values.invoiceDate],
+                  ["Nama", values.clientName],
+                  ["No. Telp", values.phone],
+                  ["Instagram", values.instagram],
+                  ["Alamat", values.address],
+                  ["Acara", values.acara],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex gap-2">
+                    <span className="w-[90px] flex-none text-ink-soft">{label}</span>
+                    <span className="text-ink-soft">:</span>
+                    <span className="font-medium text-ink">{value || "-"}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="relative mt-6 overflow-hidden rounded-sm border border-line">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-ink text-btn-ink">
+                      <th className="px-3 py-2 text-left text-xs uppercase tracking-wide">
+                        Deskripsi
+                      </th>
+                      <th className="px-3 py-2 text-right text-xs uppercase tracking-wide">
+                        Harga
+                      </th>
+                      <th className="px-3 py-2 text-right text-xs uppercase tracking-wide">Qty</th>
+                      <th className="px-3 py-2 text-right text-xs uppercase tracking-wide">
+                        Total
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="relative">
+                    <tr>
+                      <td colSpan={4} className="p-0">
+                        <div className="relative min-h-[140px]">
+                          <img
+                            src="/images/Logo.PNG"
+                            alt=""
+                            aria-hidden
+                            className="pointer-events-none absolute left-1/2 top-1/2 w-40 -translate-x-1/2 -translate-y-1/2 opacity-[0.08]"
+                          />
+                          <table className="relative w-full text-sm">
+                            <tbody>
+                              {values.items?.map((item, i) => (
+                                <tr key={i} className="border-t border-line/60">
+                                  <td className="px-3 py-2">{item?.description || "-"}</td>
+                                  <td className="px-3 py-2 text-right">
+                                    {formatRupiah(Number(item?.price) || 0)}
+                                  </td>
+                                  <td className="px-3 py-2 text-right">{Number(item?.qty) || 0}</td>
+                                  <td className="px-3 py-2 text-right">
+                                    {formatRupiah(
+                                      (Number(item?.qty) || 0) * (Number(item?.price) || 0)
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
 
-              <div className="mt-4 flex flex-col items-end gap-1 text-sm">
-                <div className="flex w-48 justify-between text-ink-soft">
-                  <span>Subtotal</span>
-                  <span>{formatRupiah(subtotal)}</span>
-                </div>
-                {discount > 0 && (
-                  <div className="flex w-48 justify-between text-ink-soft">
-                    <span>Diskon</span>
-                    <span>-{formatRupiah(discount)}</span>
+              <div className="mt-3 flex justify-end">
+                <div className="w-56 overflow-hidden rounded-sm border border-line text-sm">
+                  <div className="flex items-center justify-between border-b border-line px-3 py-2">
+                    <span className="font-bold uppercase tracking-wide text-ink">Total</span>
+                    <span className="font-bold text-ink">{formatRupiah(total)}</span>
                   </div>
-                )}
-                <div className="flex w-48 justify-between border-t border-line pt-1.5 font-bold text-ink">
-                  <span>Total</span>
-                  <span>{formatRupiah(total)}</span>
+                  <div className="flex items-center justify-between border-b border-line px-3 py-2">
+                    <span className="font-bold uppercase tracking-wide text-ink">DP</span>
+                    <span className="text-ink">{formatRupiah(dp)}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-3 py-2">
+                    <span className="font-bold uppercase tracking-wide text-ink">Sisa</span>
+                    <span className="text-ink">{formatRupiah(sisa)}</span>
+                  </div>
                 </div>
               </div>
 
-              {values.notes && (
-                <div className="mt-6 border-t border-line pt-4 text-xs text-ink-soft">
-                  <p className="font-bold uppercase tracking-wide text-ink">Catatan</p>
-                  <p className="mt-1 whitespace-pre-line">{values.notes}</p>
+              <div className="mt-8 flex items-end justify-between gap-6 text-xs">
+                <div>
+                  <p className="font-bold uppercase tracking-wide text-ink">Payment Details</p>
+                  <p className="mt-1.5 text-ink-soft">
+                    <span className="font-bold text-ink">BCA</span> 8880392973
+                    <br />
+                    A.n Cut Lisya Indriyeni
+                  </p>
                 </div>
-              )}
+                <div>
+                  <p className="font-bold uppercase tracking-wide text-ink">Contact Us</p>
+                  <p className="mt-1.5 text-ink-soft">
+                    081366665092
+                    <br />
+                    @seserahanbymecca
+                  </p>
+                </div>
+              </div>
 
-              <div className="mt-6 border-t border-line pt-4 text-xs text-ink-soft">
-                <p className="font-bold uppercase tracking-wide text-ink">Pembayaran</p>
-                <p className="mt-1">BCA 8880392973 a.n Cut Lisya Indriyeni</p>
+              <div className="mt-10 flex justify-end">
+                <div className="w-40 border-t border-ink pt-1 text-center text-[11px] text-ink-soft">
+                  Tanda Tangan
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
   );
 }
