@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { login } from "@/app/login/actions";
 
 export function LoginForm() {
@@ -43,12 +44,12 @@ export function LoginForm() {
         {pending ? "Memeriksa..." : "Masuk"}
       </button>
 
-      <link
+      <Link
         href="/"
         className="mt-5 block text-center text-xs text-ink-soft transition-colors hover:text-accent"
       >
         &larr; Kembali ke beranda
-      </link>
+      </Link>
     </form>
   );
 }
