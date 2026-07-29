@@ -4,7 +4,7 @@ const stripImages = [1, 2, 3, 4, 5];
 
 const address = "Jl. Tenjo City No.11, Singabangsa, Kec. Tenjo, Kabupaten Bogor, Jawa Barat 16370, Indonesia";
 const waNumber = "6281366665092";
-const waLink = `https://wa.me/${waNumber}`;
+const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(`Hai, saya ingin konsultasi untuk seserahan pernikahan saya`)}`;
 
 const contacts = [
   {
@@ -88,7 +88,8 @@ export function ContactFooter() {
               <p className="mt-3 max-w-[42ch] text-[0.98rem] leading-[1.7] text-ink-soft">
                 Lihat inspirasi rangkaian terbaru dan cerita pengantin kami setiap minggu di TikTok &amp; Instagram.
               </p>
-              <a href={waLink} target="_blank" rel="noopener noreferrer" className="btn-primary mt-5">
+              <a href={waLink}
+                    target="_blank" rel="noopener noreferrer" className="btn-primary mt-5">
                 Chat via WhatsApp
               </a>
             </div>
@@ -100,7 +101,7 @@ export function ContactFooter() {
                 <a key={n} href="#" className="group relative block aspect-square overflow-hidden rounded-2xl">
                   <img
                     loading="lazy"
-                    src={`/images/strip-${n}.jpg`}
+                    src={`/images/strip-${n}.jpeg`}
                     alt={`Momen seserahan ${n}`}
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-110"
                   />

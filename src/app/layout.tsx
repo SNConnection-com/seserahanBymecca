@@ -12,10 +12,63 @@ import "./globals.css";
 //   subsets: ["latin"],
 // });
 
+const siteUrl = "https://seserahanbymecca.snconnection.id";
+const title = "Seserahan by Mecca — Jasa Seserahan & Mahar Pernikahan Custom Tangerang";
+const description =
+  "Seserahan by Mecca merangkai seserahan pernikahan, lamaran, tunangan, dan mahar akrilik custom dengan desain elegan dan penuh ketelitian. Konsultasi gratis lewat WhatsApp, melayani Tangerang & seluruh Indonesia.";
+
 export const metadata: Metadata = {
-  title: "Seserahan by Mecca — Atelier Seserahan Pengantin",
-  description:
-    "Seserahan by Mecca merangkai hantaran pernikahan custom — Klasik, Signature, hingga Bespoke. Konsultasi gratis lewat WhatsApp.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: title,
+    template: "%s — Seserahan by Mecca",
+  },
+  description,
+  keywords: [
+    "seserahan",
+    "seserahan pernikahan",
+    "seserahan nikah",
+    "seserahan lamaran",
+    "hantaran pernikahan",
+    "mahar akrilik",
+    "jasa seserahan Tangerang",
+    "pernikahan",
+    "hampers lamaran",
+  ],
+  authors: [{ name: "Seserahan by Mecca" }],
+  alternates: {
+    canonical: siteUrl,
+  },
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: siteUrl,
+    siteName: "Seserahan by Mecca",
+    title,
+    description,
+    images: [
+      {
+        url: "/images/hero1.jpeg",
+        width: 1200,
+        height: 1200,
+        alt: "Seserahan by Mecca — rangkaian seserahan pernikahan custom",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/images/hero1.jpeg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

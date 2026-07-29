@@ -99,7 +99,9 @@ export function Packages() {
                     ))}
                   </ul>
                   <a
-                    href="#d1-kontak"
+                    href={`https://wa.me/6281366665092?text=${encodeURIComponent(`Hai, saya ingin konsultasi untuk paket ${pkg.title}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="group/cta mt-5 inline-flex items-center gap-1.5 self-start text-xs font-bold uppercase tracking-wide text-accent"
                   >
                     Konsultasi Paket Ini

@@ -43,7 +43,7 @@ export function Hero() {
             className="h-full w-full object-cover"
           />
         </div>
-        <svg
+        {/* <svg
           className="absolute right-[-2%] top-[2%] w-16 text-accent-2 opacity-80"
           viewBox="0 0 70 90"
           fill="none"
@@ -57,8 +57,8 @@ export function Hero() {
           <circle cx="19" cy="15" r="3" />
           <circle cx="55" cy="14" r="3" />
           <circle cx="17" cy="46" r="3" />
-        </svg>
-        <svg
+        </svg> */}
+        {/* <svg
           className="absolute bottom-0 left-[-4%] w-[52px] rotate-[205deg] text-accent-2 opacity-80"
           viewBox="0 0 70 90"
           fill="none"
@@ -68,7 +68,7 @@ export function Hero() {
           <path d="M35 88C33 60 33 30 35 4" />
           <path d="M35 20c-10-4-16-14-14-22" />
           <path d="M35 38c12-2 20-12 19-22" />
-        </svg>
+        </svg> */}
       </div>
     </div>
   );
