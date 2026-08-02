@@ -90,7 +90,9 @@ export function InvoiceForm() {
       0
     ) ?? 0;
   const dp = Number(values.dp) || 0;
-  const sisa = Math.max(total - dp, 0);
+  const balance = total - dp;
+  const isOverpaid = balance < 0;
+  const sisa = Math.abs(balance);
 
   const printFn = useReactToPrint({
     contentRef: previewRef,
@@ -271,7 +273,7 @@ export function InvoiceForm() {
             >
               <div className="flex items-start justify-between">
                 <h2 className="font-display text-2xl font-semibold text-ink">Seserahan By Mecca</h2>
-                <p className="font-script text-3xl italic text-red-600">Invoice</p>
+                <p className=" text-3xl font-bold text-red-600">Invoice</p>
               </div>
 
               <div className="mt-3 flex items-start gap-2 text-xs text-ink-soft">
@@ -348,7 +350,25 @@ export function InvoiceForm() {
                 </table>
               </div>
 
-              <div className="mt-3 flex justify-end">
+              <div className="mt-3  flex justify-between gap-3 text-sm">
+                <div className="mt-3 gap-6 text-xs">
+                  <div>
+                    <p className="font-bold uppercase tracking-wide text-ink">Payment Details</p>
+                    <p className="mt-1.5 text-ink-soft">
+                      <span className="font-bold text-ink">BCA</span> 8880392973
+                      <br />
+                      A.n Cut Lisya Indriyeni
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <p className="font-bold uppercase tracking-wide text-ink">Contact Us</p>
+                    <p className="mt-1.5 text-ink-soft">
+                      081366665092
+                      <br />
+                      @seserahanbymecca
+                    </p>
+                  </div>
+                </div>
                 <div className="w-56 overflow-hidden rounded-sm border border-line text-sm">
                   <div className="flex items-center justify-between border-b border-line px-3 py-2">
                     <span className="font-bold uppercase tracking-wide text-ink">Total</span>
@@ -359,33 +379,19 @@ export function InvoiceForm() {
                     <span className="text-ink">{formatRupiah(dp)}</span>
                   </div>
                   <div className="flex items-center justify-between px-3 py-2">
-                    <span className="font-bold uppercase tracking-wide text-ink">Sisa</span>
-                    <span className="text-ink">{formatRupiah(sisa)}</span>
+                    <span className="font-bold uppercase tracking-wide text-ink">
+                      {isOverpaid ? "Lebih Bayar" : "Sisa"}
+                    </span>
+                    <span className={isOverpaid ? "font-bold text-green-600" : "text-ink"}>
+                      {isOverpaid ? "+" : ""}
+                      {formatRupiah(sisa)}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 flex items-end justify-between gap-6 text-xs">
-                <div>
-                  <p className="font-bold uppercase tracking-wide text-ink">Payment Details</p>
-                  <p className="mt-1.5 text-ink-soft">
-                    <span className="font-bold text-ink">BCA</span> 8880392973
-                    <br />
-                    A.n Cut Lisya Indriyeni
-                  </p>
-                </div>
-                <div>
-                  <p className="font-bold uppercase tracking-wide text-ink">Contact Us</p>
-                  <p className="mt-1.5 text-ink-soft">
-                    081366665092
-                    <br />
-                    @seserahanbymecca
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-10 flex justify-end">
-                <div className="w-40 border-t border-ink pt-1 text-center text-[11px] text-ink-soft">
+              <div className="mt-24 flex justify-end">
+                <div className="w-40 border-t border-ink pt-2 text-center text-[11px] text-ink-soft">
                   Tanda Tangan
                 </div>
               </div>
