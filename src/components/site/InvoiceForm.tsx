@@ -157,6 +157,9 @@ export function InvoiceForm() {
                   No. Telp
                 </label>
                 <input {...register("phone")} placeholder="08xx-xxxx-xxxx" className="input" />
+                {errors.phone && (
+                  <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>
+                )}syhsbjhgsan jlsah duisanfuiwn jkhdmn
               </div>
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
